@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+  <head>
+<script>window.MARCH_CRAZYGAMES_BUILD=true;</script>
+    <meta charset="utf-8">
+
+    <title>Hero March</title>
+
+    <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,minimum-scale=1,maximum-scale=1,minimal-ui=true"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="mobile-web-app-capable" content="yes"/>
+    <meta name="full-screen" content="yes"/>
+    <meta name="screen-orientation" content="landscape"/>
+    <meta name="x5-fullscreen" content="true"/>
+    <meta name="360-fullscreen" content="true"/>
+
+    <meta name="renderer" content="webkit"/>
+    <meta name="force-rendering" content="webkit"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+
+    <link rel="stylesheet" type="text/css" href="./style.026c1.css"/>
+    <link rel="icon" type="image/png" sizes="256x256" href="favicon.png?v=ea2907c78e46"/>
+    <link rel="icon" type="image/x-icon" sizes="16x16 32x32 48x48 64x64 128x128 256x256" href="favicon.ico?v=ea2907c78e46"/>
+  </head>
+  <body>
+<!-- Bootstrap-only fallback: Prefabs cannot render before the Cocos engine starts. -->
+<style>
+#game-boot-error[hidden]{display:none}
+#game-boot-error{position:fixed;inset:0;z-index:10000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:24px;background:rgba(0,0,0,.88);color:#fff;text-align:center;font:20px sans-serif}
+#game-boot-error h1{font-size:28px;margin:0}
+#game-boot-error p{font-size:17px;max-width:580px;margin:0;line-height:1.5;color:#cbd9e5}
+#game-boot-error button{border:1px solid #68d9ff;border-radius:10px;padding:14px 36px;background:#1765b8;color:#fff;font:bold 20px sans-serif;cursor:pointer}
+</style>
+<section id="game-boot-error" role="alert" hidden>
+  <h1 id="game-boot-title">Unable to start the game</h1>
+  <p id="game-boot-detail">Please check your connection and reload. Your saved progress will be kept.</p>
+  <button id="game-boot-retry" type="button">Reload</button>
+</section>
+<script>
+(function(){
+  var ready=false,panel=document.getElementById('game-boot-error');
+  var fail=function(){if(!ready)panel.hidden=false;};
+  var timer=setTimeout(fail,45000);
+  if(new URLSearchParams(location.search).get('lang')==='zh-CN'){
+    document.getElementById('game-boot-title').textContent='游戏启动未完成';
+    document.getElementById('game-boot-detail').textContent='请检查网络后重新加载，已有存档会保留。';
+    document.getElementById('game-boot-retry').textContent='重新加载';
+  }
+  var done=function(){
+    ready=true;clearTimeout(timer);panel.hidden=true;
+    window.removeEventListener('error',fail,true);
+    window.removeEventListener('unhandledrejection',fail);
+    window.removeEventListener('march:boot-error',fail);
+    window.removeEventListener('march:runtime-ready',done);
+  };
+  document.getElementById('game-boot-retry').addEventListener('click',function(){location.reload();});
+  window.addEventListener('error',fail,true);
+  window.addEventListener('unhandledrejection',fail);
+  window.addEventListener('march:boot-error',fail);
+  window.addEventListener('march:runtime-ready',done);
+})();
+</script>
+
+
+    <div id="GameDiv" cc_exact_fit_screen="true" style="width: 100%; height: 100%;">
+      <div id="Cocos3dGameContainer">
+        <canvas id="GameCanvas" width="1280" height="960" tabindex="99"></canvas>
+      </div>
+    </div>
+    <!-- Polyfills bundle. -->
+
+<script src="src/polyfills.bundle.5adbf.js" charset="utf-8"> </script>    
+
+
+<!-- SystemJS support. -->
+<script src="src/system.bundle.543e6.js" charset="utf-8"> </script>
+
+<!-- Import map -->
+<script src="src/import-map.c0707.json" type="systemjs-importmap" charset="utf-8"> </script>
+
+<script>
+    System.import('./index.36072.js').catch(function(err) { console.error(err); })
+</script>
+  </body>
+</html>
