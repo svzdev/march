@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
   <head>
-<script>window.MARCH_CRAZYGAMES_BUILD=true;</script>
     <meta charset="utf-8">
 
     <title>Hero March</title>
@@ -23,14 +22,27 @@
     <link rel="icon" type="image/x-icon" sizes="16x16 32x32 48x48 64x64 128x128 256x256" href="favicon.ico?v=ea2907c78e46"/>
   </head>
   <body>
-<!-- Bootstrap-only fallback: Prefabs cannot render before the Cocos engine starts. -->
+<!-- march-bootstrap:start -->
+<!-- Bootstrap-only UI: Prefabs cannot render before the Cocos engine starts. -->
 <style>
+#game-boot-loading[hidden],
 #game-boot-error[hidden]{display:none}
+#game-boot-loading{position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:24px;background:#101a2b;color:#fff;text-align:center;font:18px sans-serif}
+#game-boot-loading h1{font-size:32px;margin:0}
+#game-boot-loading p{max-width:580px;margin:0;line-height:1.5;color:#cbd9e5}
+#game-boot-spinner{width:36px;height:36px;border:4px solid #34465e;border-top-color:#68d9ff;border-radius:50%;animation:march-boot-spin 1s linear infinite}
+@keyframes march-boot-spin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){#game-boot-spinner{animation:none}}
 #game-boot-error{position:fixed;inset:0;z-index:10000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:24px;background:rgba(0,0,0,.88);color:#fff;text-align:center;font:20px sans-serif}
 #game-boot-error h1{font-size:28px;margin:0}
 #game-boot-error p{font-size:17px;max-width:580px;margin:0;line-height:1.5;color:#cbd9e5}
 #game-boot-error button{border:1px solid #68d9ff;border-radius:10px;padding:14px 36px;background:#1765b8;color:#fff;font:bold 20px sans-serif;cursor:pointer}
 </style>
+<section id="game-boot-loading" role="status" aria-live="polite">
+  <h1>Hero March</h1>
+  <div id="game-boot-spinner" aria-hidden="true"></div>
+  <p id="game-boot-loading-detail">Loading the game. The first visit may take a little longer.</p>
+</section>
 <section id="game-boot-error" role="alert" hidden>
   <h1 id="game-boot-title">Unable to start the game</h1>
   <p id="game-boot-detail">Please check your connection and reload. Your saved progress will be kept.</p>
@@ -38,16 +50,20 @@
 </section>
 <script>
 (function(){
-  var ready=false,panel=document.getElementById('game-boot-error');
-  var fail=function(){if(!ready)panel.hidden=false;};
-  var timer=setTimeout(fail,45000);
-  if(new URLSearchParams(location.search).get('lang')==='zh-CN'){
+  var ready=false,panel=document.getElementById('game-boot-error'),loading=document.getElementById('game-boot-loading');
+  var detail=document.getElementById('game-boot-loading-detail');
+  var chinese=new URLSearchParams(location.search).get('lang')==='zh-CN';
+  var fail=function(){if(!ready){clearTimeout(timer);loading.hidden=true;panel.hidden=false;}};
+  // A slow first download is not evidence of a failed boot.
+  var timer=setTimeout(function(){if(!ready&&panel.hidden)detail.textContent=chinese?'仍在加载，请稍候。首次访问需要下载游戏资源。':'Still loading. Please wait while the game downloads its first resources.';},45000);
+  if(chinese){
+    detail.textContent='正在加载游戏，首次访问可能需要更长时间。';
     document.getElementById('game-boot-title').textContent='游戏启动未完成';
     document.getElementById('game-boot-detail').textContent='请检查网络后重新加载，已有存档会保留。';
     document.getElementById('game-boot-retry').textContent='重新加载';
   }
   var done=function(){
-    ready=true;clearTimeout(timer);panel.hidden=true;
+    ready=true;clearTimeout(timer);panel.hidden=true;loading.hidden=true;
     window.removeEventListener('error',fail,true);
     window.removeEventListener('unhandledrejection',fail);
     window.removeEventListener('march:boot-error',fail);
@@ -60,6 +76,7 @@
   window.addEventListener('march:runtime-ready',done);
 })();
 </script>
+<!-- march-bootstrap:end -->
 
 
     <div id="GameDiv" cc_exact_fit_screen="true" style="width: 100%; height: 100%;">
@@ -79,7 +96,7 @@
 <script src="src/import-map.c0707.json" type="systemjs-importmap" charset="utf-8"> </script>
 
 <script>
-    System.import('./index.36072.js').catch(function(err) { console.error(err); })
+    System.import('./index.36072.js').catch(function(err) { console.error(err); window.dispatchEvent(new Event('march:boot-error')); })
 </script>
   </body>
 </html>
